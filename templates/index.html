@@ -1,0 +1,82 @@
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" id="bootstrap-css" rel="stylesheet" />
+</head>
+<body>
+<div class="container">
+<div class="row">
+<div class="jumbotron">
+<h2>Find Shortest Path Between two Towns</h2>
+</div>
+
+<div class="col-md-4">
+<form  action="" method="post" id="distance_form">
+<div class="form-group"><label>Origin: </label> <input class="form-control" id="origin" name="origin" placeholder="Enter a location" />
+   </div>
+
+<div class="form-group"><label>Destination: </label> <input class="form-control" id="destination" name="destination" placeholder="Enter a location" /> 
+  </div>
+
+<div class = "form-group" id='distance_form' action = 'url_for('graphs')>
+<input type="radio" id="bfs" name="search_alg" value="bfs">
+<label for="html">Breadth First Search</label><br>
+<input type="radio" id="dfs" name="search_alg" value="dfs">
+<label for="css">Depth First Search</label><br>
+<input type="radio" id="a_star" name="search_alg" value="a-star">
+<label for="javascript">A*</label>
+  
+</div> 
+<a href='graphs.html'>
+<input class="btn btn-primary" type="submit" value="Find Shortest Route" /></a>
+</form>
+
+</div>
+<div class = "col-md-8">
+<div class="graph" id="graph">
+</div>
+</div>
+
+</div>
+</div>
+<script>
+$(document).ready(function() {    
+      $('#distance_form').submit(function(e){
+        e.preventDefault();
+
+        var origin = $('#origin').val();
+        var destination = $('#destination').val();
+        var radioValue = $("input[name='search_alg']:checked").val();
+
+          $.ajax({
+              url: '/graphs',
+              data: {
+                  origin: origin,
+                  destination: destination,
+                  algorithm: radioValue,
+                },
+              type: 'POST',
+              dataType: 'json',
+              success: function (data) {
+                Plotly.newPlot('graph', data );
+              }
+            })
+          .done(function (data) {
+            console.log(data);
+          });
+
+       });
+
+    });
+
+</script>
+</body>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script type="text/javascript">
+    var graphs = {{graphJSON | safe}};
+    Plotly.plot('graph',graphs,{});        
+</script>
+</html>
